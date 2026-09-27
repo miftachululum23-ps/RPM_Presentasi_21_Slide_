@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Refleksi dan Evaluasi Pemahaman RPM</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; }
+  body { min-height: 100vh; background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 50%, #06b6d4 100%); display: flex; justify-content: center; align-items: flex-start; padding: 20px; }
+  .container { width: 100%; max-width: 900px; background: white; border-radius: 20px; box-shadow: 0 25px 60px rgba(0, 0, 0, 0.3); overflow: hidden; }
+  .header { background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%); color: white; padding: 30px; text-align: center; }
+  .header-icon { font-size: 3em; margin-bottom: 10px; }
+  .header h1 { font-size: 1.8em; margin-bottom: 8px; font-weight: 700; }
+  .header p { font-size: 1.1em; opacity: 0.95; }
+  .header-meta { margin-top: 15px; display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; font-size: 0.9em; }
+  .meta-badge { background: rgba(255,255,255,0.2); padding: 6px 16px; border-radius: 20px; backdrop-filter: blur(10px); }
+  .presenter-badge { margin-top: 15px; display: inline-block; background: rgba(255,255,255,0.15); backdrop-filter: blur(10px); padding: 10px 28px; border-radius: 50px; font-size: 1em; font-weight: 600; border: 1px solid rgba(255,255,255,0.3); letter-spacing: 0.5px; }
+  .content { padding: 30px; }
+  .screen { display: none; }
+  .screen.active { display: block; animation: fadeIn 0.5s; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  .info-card { background: linear-gradient(135deg, #f0f9ff, #e0f2fe); border-left: 5px solid #3b82f6; padding: 20px; border-radius: 12px; margin-bottom: 20px; }
+  .info-card h3 { color: #1e3a8a; margin-bottom: 10px; font-size: 1.2em; }
+  .info-card ul { list-style: none; padding: 0; }
+  .info-card li { padding: 6px 0; padding-left: 25px; position: relative; color: #334155; }
+  .info-card li::before { content: "✓"; position: absolute; left: 0; color: #10b981; font-weight: bold; }
+  .form-group { margin-bottom: 15px; }
+  .form-group label { display: block; margin-bottom: 6px; color: #1e293b; font-weight: 600; }
+  .form-group input { width: 100%; padding: 12px 16px; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 1em; transition: all 0.3s; }
+  .form-group input:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1); }
+  .btn { background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%); color: white; border: none; padding: 14px 35px; font-size: 1.05em; font-weight: 600; border-radius: 50px; cursor: pointer; transition: all 0.3s; box-shadow: 0 8px 20px rgba(30, 58, 138, 0.3); }
+  .btn:hover { transform: translateY(-2px); box-shadow: 0 12px 25px rgba(30, 58, 138, 0.4); }
+  .btn-secondary { background: linear-gradient(135deg, #64748b 0%, #475569 100%); box-shadow: 0 8px 20px rgba(100, 116, 139, 0.3); }
+  .btn-warning { background: linear-gradient(135deg, #d97706 0%, #f59e0b 100%); box-shadow: 0 8px 20px rgba(217, 119, 6, 0.3); }
+  .btn-success { background: linear-gradient(135deg, #059669 0%, #10b981 100%); box-shadow: 0 8px 20px rgba(5, 150, 105, 0.3); }
+  .btn-small { padding: 10px 20px; font-size: 0.95em; }
+  .progress-container { background: #e2e8f0; border-radius: 10px; height: 12px; margin-bottom: 20px; overflow: hidden; }
+  .progress-bar { height: 100%; background: linear-gradient(90deg, #10b981, #059669); width: 0%; transition: width 0.4s ease; border-radius: 10px; }
+  .progress-info { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 0.9em; color: #64748b; }
+  .question-card { background: #f8fafc; padding: 25px; border-radius: 16px; margin-bottom: 20px; border: 2px solid #e2e8f0; }
+  .question-number { display: inline-block; background: linear-gradient(135deg, #1e3a8a, #3b82f6); color: white; padding: 6px 14px; border-radius: 20px; font-size: 0.9em; font-weight: 600; margin-bottom: 12px; }
+  .question-text { font-size: 1.15em; color: #1e293b; line-height: 1.6; margin-bottom: 20px; font-weight: 500; }
+  .options { display: flex; flex-direction: column; gap: 10px; }
+  .option { background: white; border: 2px solid #e2e8f0; padding: 15px 20px; border-radius: 12px; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; gap: 12px; }
+  .option:hover { border-color: #3b82f6; background: #f0f9ff; transform: translateX(5px); }
+  .option.selected { border-color: #3b82f6; background: #dbeafe; }
+  .option.correct { border-color: #10b981; background: #dcfce7; color: #166534; }
+  .option.wrong { border-color: #ef4444; background: #fee2e2; color: #991b1b; }
+  .option-letter { width: 32px; height: 32px; background: #e2e8f0; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; flex-shrink: 0; transition: all 0.3s; }
+  .option.selected .option-letter { background: #3b82f6; color: white; }
+  .option.correct .option-letter { background: #10b981; color: white; }
+  .option.wrong .option-letter { background: #ef4444; color: white; }
+  .feedback-box { margin-top: 15px; padding: 15px 20px; border-radius: 10px; display: none; animation: slideDown 0.3s; }
+  @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+  .feedback-box.show { display: block; }
+  .feedback-box.correct { background: #dcfce7; border-left: 5px solid #10b981; color: #166534; }
+  .feedback-box.wrong { background: #fee2e2; border-left: 5px solid #ef4444; color: #991b1b; }
+  .feedback-box strong { display: block; margin-bottom: 5px; font-size: 1.05em; }
+  .nav-buttons { display: flex; justify-content: space-between; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
+  .result-card { text-align: center; padding: 30px; background: linear-gradient(135deg, #f0f9ff, #e0f2fe); border-radius: 20px; margin-bottom: 25px; }
+  .result-icon { font-size: 5em; margin-bottom: 15px; animation: bounce 2s infinite; }
+  @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
+  .result-title { font-size: 2em; color: #1e3a8a; margin-bottom: 10px; font-weight: 700; }
+  .score-display { font-size: 3.5em; font-weight: 800; background: linear-gradient(135deg, #10b981, #059669); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin: 20px 0; }
+  .score-details { font-size: 1.1em; color: #475569; margin-bottom: 20px; }
+  .grade-badge { display: inline-block; padding: 12px 30px; border-radius: 50px; font-size: 1.2em; font-weight: 700; margin: 15px 0; color: white; }
+  .grade-A { background: linear-gradient(135deg, #059669, #10b981); }
+  .grade-B { background: linear-gradient(135deg, #2563eb, #3b82f6); }
+  .grade-C { background: linear-gradient(135deg, #d97706, #f59e0b); }
+  .grade-D { background: linear-gradient(135deg, #dc2626, #ef4444); }
+  .result-message { font-size: 1.1em; color: #334155; line-height: 1.6; margin: 20px 0; padding: 20px; background: white; border-radius: 12px; border-left: 5px solid #3b82f6; text-align: left; }
+  .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin: 20px 0; }
+  .stat-card { background: white; padding: 20px; border-radius: 12px; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+  .stat-card .stat-number { font-size: 2em; font-weight: 700; color: #1e3a8a; }
+  .stat-card .stat-label { color: #64748b; font-size: 0.9em; margin-top: 5px; }
+  .stat-card.correct .stat-number { color: #10b981; }
+  .stat-card.wrong .stat-number { color: #ef4444; }
+  .qr-section { background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border: 3px solid #f59e0b; border-radius: 20px; padding: 30px; margin: 25px 0; text-align: center; }
+  .qr-section h2 { color: #78350f; font-size: 1.6em; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; gap: 10px; }
+  .qr-section .qr-subtitle { color: #92400e; font-size: 1em; margin-bottom: 20px; }
+  .qr-container { background: white; padding: 20px; border-radius: 16px; display: inline-block; box-shadow: 0 10px 30px rgba(0,0,0,0.1); margin: 15px 0; }
+  .qr-container img { display: block; width: 250px; height: 250px; }
+  .qr-steps { background: rgba(255,255,255,0.7); border-radius: 12px; padding: 15px 20px; margin: 20px 0; text-align: left; }
+  .qr-steps ol { padding-left: 25px; color: #78350f; line-height: 1.8; }
+  .qr-steps ol li { margin-bottom: 5px; }
+  .qr-link-box { background: white; border: 2px dashed #f59e0b; border-radius: 10px; padding: 12px; margin: 15px 0; word-break: break-all; font-size: 0.85em; color: #475569; max-height: 80px; overflow-y: auto; }
+  .qr-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 15px; }
+  .qr-warning { background: #fee2e2; border-left: 5px solid #ef4444; padding: 15px 20px; border-radius: 10px; color: #991b1b; margin: 15px 0; text-align: left; }
+  .qr-warning strong { display: block; margin-bottom: 5px; }
+  .setup-guide { margin-top: 20px; text-align: left; }
+  .setup-toggle { background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%); color: white; border: none; padding: 12px 25px; border-radius: 50px; cursor: pointer; font-weight: 600; width: 100%; font-size: 1em; transition: all 0.3s; }
+  .setup-toggle:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(124, 58, 237, 0.3); }
+  .setup-content { display: none; background: #faf5ff; border: 2px solid #a855f7; border-radius: 12px; padding: 20px; margin-top: 15px; text-align: left; color: #3b0764; }
+  .setup-content.show { display: block; animation: fadeIn 0.3s; }
+  .setup-content h4 { color: #6b21a8; margin: 15px 0 8px 0; font-size: 1.1em; }
+  .setup-content ol, .setup-content ul { padding-left: 25px; line-height: 1.8; }
+  .setup-content code { background: #ede9fe; padding: 2px 8px; border-radius: 5px; font-family: 'Courier New', monospace; font-size: 0.9em; color: #6b21a8; }
+  .review-section { margin-top: 30px; }
+  .review-title { font-size: 1.5em; color: #1e3a8a; margin-bottom: 20px; text-align: center; }
+  .review-item { background: white; border: 2px solid #e2e8f0; border-radius: 12px; padding: 20px; margin-bottom: 15px; }
+  .review-item.correct { border-left: 5px solid #10b981; }
+  .review-item.wrong { border-left: 5px solid #ef4444; }
+  .review-question { font-weight: 600; color: #1e293b; margin-bottom: 10px; }
+  .review-answer { font-size: 0.95em; padding: 8px 12px; border-radius: 8px; margin: 5px 0; }
+  .review-answer.user-correct { background: #dcfce7; color: #166534; }
+  .review-answer.user-wrong { background: #fee2e2; color: #991b1b; }
+  .review-answer.correct-answer { background: #dcfce7; color: #166534; border: 2px solid #10b981; }
+  .review-explanation { margin-top: 10px; padding: 10px 15px; background: #f1f5f9; border-radius: 8px; font-size: 0.9em; color: #475569; font-style: italic; }
+  .action-buttons { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 25px; }
+  .footer { background: #f1f5f9; padding: 20px 30px; text-align: center; border-top: 1px solid #e2e8f0; color: #64748b; font-size: 0.9em; }
+  .footer strong { color: #1e3a8a; }
+  .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px); background: #10b981; color: white; padding: 12px 25px; border-radius: 50px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); opacity: 0; transition: all 0.3s; z-index: 9999; font-weight: 600; }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  @media print { body { background: white; } .container { box-shadow: none; } .btn, .action-buttons, .nav-buttons, .qr-section, .setup-guide { display: none !important; } .header { background: #1e3a8a !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; } }
+  @media (max-width: 640px) { .content { padding: 20px; } .header h1 { font-size: 1.4em; } .score-display { font-size: 2.5em; } .question-text { font-size: 1em; } .presenter-badge { font-size: 0.85em; padding: 8px 20px; } .qr-container img { width: 200px; height: 200px; } .qr-section { padding: 20px; } .qr-section h2 { font-size: 1.3em; } }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <div class="header-icon">📝</div>
+    <h1>REFLEKSI DAN EVALUASI PEMAHAMAN RPM</h1>
+    <p>Rencana Pembelajaran Mendalam</p>
+    <div class="header-meta">
+      <span class="meta-badge">📚 15 Soal</span>
+      <span class="meta-badge">⏱️ 30 Menit</span>
+      <span class="meta-badge">🎯 KKM: 70%</span>
+    </div>
+    <div class="presenter-badge">Disusun oleh: MIFTACHUL ULUM, M.Pd.</div>
+  </div>
+
+  <div class="content">
+    <div class="screen active" id="startScreen">
+      <div class="info-card">
+        <h3>📋 Petunjuk Pengerjaan</h3>
+        <ul>
+          <li>Refleksi dan Evaluasi ini terdiri dari <strong>15 soal pilihan ganda</strong></li>
+          <li>Waktu pengerjaan: <strong>30 menit</strong></li>
+          <li>Kriteria Kelulusan Minimum (KKM): <strong>70%</strong></li>
+          <li>Umpan balik langsung setelah menjawab setiap soal</li>
+          <li>Pilih jawaban paling tepat, lalu klik "Selanjutnya"</li>
+          <li>Di akhir, Anda akan melihat skor, predikat, dan <strong>QR Code untuk kirim hasil ke admin</strong></li>
+        </ul>
+      </div>
+      <div class="info-card" style="background: linear-gradient(135deg, #fef3c7, #fde68a); border-left-color: #f59e0b;">
+        <h3 style="color: #78350f;">🎯 Kategori Predikat</h3>
+        <ul>
+          <li style="color: #78350f;"><strong>A (85–100%)</strong> — Sangat Baik (Lulus Istimewa)</li>
+          <li style="color: #78350f;"><strong>B (70–84%)</strong> — Baik (Lulus)</li>
+          <li style="color: #78350f;"><strong>C (60–69%)</strong> — Cukup (Perlu Pendalaman)</li>
+          <li style="color: #78350f;"><strong>D (&lt;60%)</strong> — Perlu Peningkatan (Belum Lulus)</li>
+        </ul>
+      </div>
+      <div class="form-group">
+        <label>👤 Nama Lengkap</label>
+        <input type="text" id="userName" placeholder="Masukkan nama lengkap Anda">
+      </div>
+      <div class="form-group">
+        <label>🏫 Asal Sekolah</label>
+        <input type="text" id="userSchool" placeholder="Masukkan nama sekolah">
+      </div>
+      <div style="text-align: center; margin-top: 25px;">
+        <button class="btn" onclick="startTest()">🚀 Mulai Evaluasi</button>
+      </div>
+    </div>
+
+    <div class="screen" id="quizScreen">
+      <div class="progress-info">
+        <span>Soal <span id="qCurrent">1</span> dari <span id="qTotal">15</span></span>
+        <span>⏱️ <span id="timer">30:00</span></span>
+      </div>
+      <div class="progress-container">
+        <div class="progress-bar" id="progressBar"></div>
+      </div>
+      <div class="question-card">
+        <div class="question-number" id="qNumber">Soal 1</div>
+        <div class="question-text" id="qText"></div>
+        <div class="options" id="qOptions"></div>
+        <div class="feedback-box" id="feedbackBox">
+          <strong id="feedbackTitle"></strong>
+          <span id="feedbackText"></span>
+        </div>
+      </div>
+      <div class="nav-buttons">
+        <button class="btn btn-secondary" id="prevBtn" onclick="prevQuestion()" style="display:none;">← Sebelumnya</button>
+        <button class="btn" id="nextBtn" onclick="nextQuestion()" disabled>Selanjutnya →</button>
+      </div>
+    </div>
+
+    <div class="screen" id="resultScreen">
+      <div class="result-card">
+        <div class="result-icon" id="resultIcon">🏆</div>
+        <div class="result-title" id="resultTitle">Hasil Refleksi dan Evaluasi</div>
+        <div class="score-display"><span id="finalScore">0</span>%</div>
+        <div class="score-details">
+          <span id="userNameResult">Peserta</span> — <span id="userSchoolResult">Sekolah</span>
+        </div>
+        <div class="grade-badge" id="gradeBadge">A</div>
+        <div class="result-message" id="resultMessage"></div>
+        <div class="stats-grid">
+          <div class="stat-card correct"><div class="stat-number" id="correctCount">0</div><div class="stat-label">Benar</div></div>
+          <div class="stat-card wrong"><div class="stat-number" id="wrongCount">0</div><div class="stat-label">Salah</div></div>
+          <div class="stat-card"><div class="stat-number" id="timeUsed">0</div><div class="stat-label">Waktu (menit)</div></div>
+        </div>
+      </div>
+      
+      <div class="qr-section" id="qrSection">
+        <h2>📱 Kirim Hasil ke Admin</h2>
+        <p class="qr-subtitle">Scan QR Code di bawah untuk mengirim hasil evaluasi Anda secara otomatis</p>
+        <div id="qrWarning" class="qr-warning" style="display:none;">
+          <strong>⚠️ Admin Belum Mengkonfigurasi Form</strong>
+          QR Code belum dapat ditampilkan. Silakan hubungi admin untuk setup Google Form terlebih dahulu.
+        </div>
+        <div id="qrDisplay">
+          <div class="qr-container">
+            <img id="qrImage" src="" alt="QR Code">
+          </div>
+          <div class="qr-steps">
+            <strong>Cara Submit (3 Langkah Mudah):</strong>
+            <ol>
+              <li>Buka kamera HP atau aplikasi scanner QR</li>
+              <li>Arahkan ke QR Code di atas</li>
+              <li>Klik tombol <strong>"Kirim"</strong> / <strong>"Submit"</strong> di form yang terbuka</li>
+            </ol>
+          </div>
+          <div class="qr-link-box" id="qrLinkBox">Memuat link...</div>
+          <div class="qr-actions">
+            <button class="btn btn-success btn-small" onclick="openFormDirect()">🔗 Buka Form Langsung</button>
+            <button class="btn btn-secondary btn-small" onclick="copyLink()">📋 Salin Link</button>
+            <button class="btn btn-warning btn-small" onclick="sendWhatsApp()">💬 Kirim via WhatsApp</button>
+          </div>
+        </div>
+      </div>
+      
+      <div class="review-section">
+        <h2 class="review-title">📖 Pembahasan Lengkap</h2>
+        <div id="reviewContainer"></div>
+      </div>
+      <div class="action-buttons">
+        <button class="btn" onclick="window.print()">🖨️ Cetak Hasil</button>
+        <button class="btn btn-warning" onclick="restartTest()">🔄 Ulangi Evaluasi</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    Refleksi dan Evaluasi Pemahaman RPM — Disusun oleh <strong>MIFTACHUL ULUM, M.Pd.</strong><br>
+    Implementasi Pembelajaran Mendalam di SMP
+  </div>
+</div>
+
+<div class="toast" id="toast">Link berhasil disalin!</div>
+
+<script>
+  // ============================================
+  // KONFIGURASI ADMIN (SUDAH DIISI OTOMATIS)
+  // ============================================
+  const ADMIN_CONFIG = {
+    formId: "1FAIpQLSfBaYBkZO6IFCUVfug-VTul6AJ0lVwHEGi03l9ZfhoOOBpqqg",
+    entries: {
+      nama: "entry.410460728",
+      sekolah: "entry.966550401",
+      skor: "entry.308928487",
+      predikat: "entry.35675456",
+      waktu: "entry.318844796"
+    },
+    whatsappNumber: "6281234567890" // Ganti dengan nomor WA Anda jika perlu
+  };
+  
+  const questions = [
+    { q: "Apa tujuan utama Pembelajaran Mendalam (Deep Learning)?", options: ["Murid mampu menjawab soal dengan benar", "Murid beralih dari sekadar mengetahui menuju memahami dan mampu menggunakan pengetahuan", "Murid menghafal semua materi pelajaran", "Murid menyelesaikan semua tugas tepat waktu"], correct: 1, explanation: "Pembelajaran Mendalam mengajak pergeseran dari sekadar mengetahui menuju memahami dan mampu menggunakan pengetahuan dalam kehidupan nyata." },
+    { q: "Manakah yang BUKAN merupakan tiga prinsip utama Pembelajaran Mendalam?", options: ["Berkesadaran", "Bermakna", "Berorientasi nilai", "Menggembirakan"], correct: 2, explanation: "Tiga prinsip utama Pembelajaran Mendalam adalah: Berkesadaran, Bermakna, dan Menggembirakan." },
+    { q: "Prinsip 'Bermakna' dalam Pembelajaran Mendalam berarti pembelajaran harus...", options: ["Selalu menggunakan teknologi digital", "Memiliki hubungan dengan kehidupan, lingkungan, pengalaman, dan masalah nyata murid", "Dilaksanakan di luar kelas", "Menggunakan banyak alat peraga"], correct: 1, explanation: "Bermakna berarti pembelajaran terhubung dengan kehidupan murid, lingkungan, pengalaman, kebutuhan, dan masalah nyata di masyarakat." },
+    { q: "Contoh penerapan prinsip 'Berkesadaran' yang tepat adalah...", options: ["Guru mengatakan: 'Hari ini kita belajar pencemaran lingkungan'", "Guru menyampaikan tujuan pembelajaran secara jelas: 'Setelah pembelajaran ini, kalian mampu mengidentifikasi masalah pencemaran, menganalisis penyebabnya, dan merancang solusi'", "Murid mengerjakan soal tanpa memahami tujuannya", "Murid mencatat semua penjelasan guru"], correct: 1, explanation: "Berkesadaran berarti murid mengetahui arah belajarnya — apa yang dipelajari, mengapa, dan apa tujuannya." },
+    { q: "Prinsip 'Menggembirakan' dalam Pembelajaran Mendalam berarti...", options: ["Kelas harus selalu ramai dan penuh permainan", "Guru harus selalu bercanda di kelas", "Murid merasa aman, dihargai, tertantang positif, dan menikmati proses belajar", "Murid tidak boleh merasa kesulitan"], correct: 2, explanation: "Menggembirakan bukan berarti kelas selalu ramai. Joyful learning terjadi ketika murid merasa aman, dihargai, tertantang positif, dan menikmati proses belajar." },
+    { q: "Tiga tahapan pengalaman belajar dalam RPM adalah...", options: ["Membaca — Menulis — Menghitung", "Memahami — Mengaplikasi — Merefleksi", "Pembuka — Inti — Penutup", "Dengar — Lihat — Kerjakan"], correct: 1, explanation: "Tiga pengalaman belajar dalam RPM adalah: Memahami (membangun konsep), Mengaplikasi (menggunakan pengetahuan), dan Merefleksi (melihat kembali proses belajar)." },
+    { q: "Pada tahap 'Mengaplikasi', murid diharapkan...", options: ["Membaca dan menghafal materi", "Mendengarkan penjelasan guru dengan seksama", "Menggunakan pengetahuan untuk menghadapi situasi atau masalah nyata", "Menuliskan kembali materi yang telah dipelajari"], correct: 2, explanation: "Mengaplikasi berarti murid menggunakan pengetahuan untuk memecahkan masalah, melakukan eksperimen, membuat produk, atau menerapkan konsep dalam kehidupan nyata." },
+    { q: "Berapa jumlah tahap dalam kerangka RPM?", options: ["2 tahap", "3 tahap", "4 tahap", "5 tahap"], correct: 2, explanation: "Kerangka RPM terdiri dari 4 tahap: (1) Identifikasi, (2) Desain Pembelajaran, (3) Pengalaman Belajar, (4) Asesmen." },
+    { q: "Pada Tahap 1 (Identifikasi), guru perlu mempertimbangkan hal-hal berikut, KECUALI...", options: ["Kesiapan murid", "Karakteristik materi", "Dimensi profil lulusan yang relevan", "Jumlah soal ujian yang akan dibuat"], correct: 3, explanation: "Tahap Identifikasi mencakup: siapa murid saya (kesiapan), karakteristik materi, dan dimensi profil lulusan yang relevan. Jumlah soal ujian bukan bagian identifikasi." },
+    { q: "Contoh tujuan pembelajaran yang OPERASIONAL adalah...", options: ["Murid memahami pencemaran lingkungan", "Murid mengetahui tentang banjir", "Murid mampu menganalisis penyebab pencemaran di sekitar sekolah dan merancang solusi sederhana berdasarkan hasil pengamatan", "Murid menguasai materi pencemaran"], correct: 2, explanation: "Tujuan operasional harus spesifik dan terukur, bukan sekadar 'memahami' atau 'mengetahui'. Contoh yang baik menyebutkan kemampuan konkret yang akan ditunjukkan murid." },
+    { q: "Dalam kerangka pembelajaran RPM, teknologi digital sebaiknya digunakan...", options: ["Di setiap pertemuan tanpa terkecuali", "Hanya ketika memang memperkuat pembelajaran", "Hanya untuk murid yang memiliki gadget", "Sebagai pengganti guru sepenuhnya"], correct: 1, explanation: "Prinsipnya: jangan menggunakan teknologi hanya karena tersedia. Teknologi digunakan ketika memang memperkuat pembelajaran." },
+    { q: "Asesmen dalam RPM dilakukan pada saat...", options: ["Hanya di akhir pembelajaran", "Hanya di awal pembelajaran", "Hanya saat ujian tengah semester", "Awal, proses, dan akhir pembelajaran"], correct: 3, explanation: "Asesmen dalam RPM mencakup 3 jenis: Asesmen Awal (diagnostik), Asesmen Proses (formatif), dan Asesmen Akhir (sumatif)." },
+    { q: "Tujuan asesmen AWAL dalam RPM adalah untuk mengetahui...", options: ["Nilai akhir yang diperoleh murid", "Murid sudah tahu apa sebelum pembelajaran dimulai", "Siapa murid yang paling pintar di kelas", "Apakah murid sudah siap menghadapi ujian"], correct: 1, explanation: "Asesmen awal bertujuan mengetahui 'Murid sudah tahu apa?' sebagai dasar untuk merancang pembelajaran yang sesuai dengan kesiapan murid." },
+    { q: "Perubahan paradigma utama dalam RPM dibanding pendekatan tradisional adalah...", options: ["Dari fokus pada materi menjadi fokus pada kemampuan yang dibangun pada murid", "Dari menggunakan buku menjadi menggunakan gadget", "Dari belajar di kelas menjadi belajar di luar kelas", "Dari ujian tertulis menjadi ujian lisan"], correct: 0, explanation: "RPM mengubah cara berpikir: dari 'materi apa yang diajarkan' menjadi 'kemampuan apa yang dibangun', dari 'kegiatan guru' menjadi 'pengalaman belajar murid'." },
+    { q: "Pernyataan yang PALING TEPAT tentang RPM adalah...", options: ["RPM adalah pekerjaan administrasi tambahan bagi guru", "RPM adalah modul ajar lama dengan istilah baru", "RPM adalah alat berpikir guru agar pembelajaran dirancang berdasarkan kebutuhan murid", "RPM adalah format pengganti RPP yang lebih rumit"], correct: 2, explanation: "RPM BUKAN pekerjaan administrasi tambahan. RPM adalah alat berpikir guru agar pembelajaran dirancang berdasarkan kebutuhan murid, memiliki tujuan jelas, dan diakhiri dengan refleksi." }
+  ];
+
+  let currentQ = 0;
+  let userAnswers = new Array(questions.length).fill(null);
+  let startTime = null;
+  let timerInterval = null;
+  let timeRemaining = 30 * 60;
+  let lastResultData = null;
+
+  function startTest() {
+    const name = document.getElementById('userName').value.trim();
+    const school = document.getElementById('userSchool').value.trim();
+    if (!name || !school) { alert('Mohon isi Nama Lengkap dan Asal Sekolah terlebih dahulu!'); return; }
+    document.getElementById('startScreen').classList.remove('active');
+    document.getElementById('quizScreen').classList.add('active');
+    document.getElementById('qTotal').textContent = questions.length;
+    startTime = new Date();
+    startTimer();
+    loadQuestion();
+  }
+
+  function startTimer() {
+    timerInterval = setInterval(() => {
+      timeRemaining--;
+      const minutes = Math.floor(timeRemaining / 60);
+      const seconds = timeRemaining % 60;
+      document.getElementById('timer').textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+      if (timeRemaining <= 0) { clearInterval(timerInterval); alert('⏰ Waktu habis! Evaluasi akan otomatis dikumpulkan.'); finishTest(); }
+    }, 1000);
+  }
+
+  function loadQuestion() {
+    const q = questions[currentQ];
+    document.getElementById('qCurrent').textContent = currentQ + 1;
+    document.getElementById('qNumber').textContent = `Soal ${currentQ + 1}`;
+    document.getElementById('qText').textContent = q.q;
+    const optionsDiv = document.getElementById('qOptions');
+    optionsDiv.innerHTML = '';
+    const letters = ['A', 'B', 'C', 'D'];
+    q.options.forEach((opt, idx) => {
+      const div = document.createElement('div');
+      div.className = 'option';
+      if (userAnswers[currentQ] === idx) div.classList.add('selected');
+      div.innerHTML = `<div class="option-letter">${letters[idx]}</div><div>${opt}</div>`;
+      div.onclick = () => selectOption(idx);
+      optionsDiv.appendChild(div);
+    });
+    const progress = ((currentQ) / questions.length) * 100;
+    document.getElementById('progressBar').style.width = progress + '%';
+    document.getElementById('prevBtn').style.display = currentQ > 0 ? 'inline-block' : 'none';
+    const nextBtn = document.getElementById('nextBtn');
+    nextBtn.disabled = userAnswers[currentQ] === null;
+    nextBtn.textContent = currentQ === questions.length - 1 ? '✓ Selesai' : 'Selanjutnya →';
+    document.getElementById('feedbackBox').classList.remove('show');
+  }
+
+  function selectOption(idx) {
+    if (userAnswers[currentQ] !== null) return;
+    userAnswers[currentQ] = idx;
+    const q = questions[currentQ];
+    const options = document.querySelectorAll('.option');
+    options.forEach((opt, i) => { opt.classList.remove('selected'); if (i === idx) opt.classList.add('selected'); });
+    const feedbackBox = document.getElementById('feedbackBox');
+    const feedbackTitle = document.getElementById('feedbackTitle');
+    const feedbackText = document.getElementById('feedbackText');
+    if (idx === q.correct) {
+      options[idx].classList.add('correct');
+      feedbackBox.className = 'feedback-box show correct';
+      feedbackTitle.textContent = '✓ Benar!';
+      feedbackText.textContent = q.explanation;
+    } else {
+      options[idx].classList.add('wrong');
+      options[q.correct].classList.add('correct');
+      feedbackBox.className = 'feedback-box show wrong';
+      feedbackTitle.textContent = '✗ Kurang Tepat';
+      feedbackText.textContent = q.explanation;
+    }
+    document.getElementById('nextBtn').disabled = false;
+  }
+
+  function nextQuestion() {
+    if (userAnswers[currentQ] === null) return;
+    if (currentQ < questions.length - 1) { currentQ++; loadQuestion(); } else { finishTest(); }
+  }
+
+  function prevQuestion() { if (currentQ > 0) { currentQ--; loadQuestion(); } }
+
+  function finishTest() {
+    clearInterval(timerInterval);
+    const endTime = new Date();
+    const timeUsed = Math.floor((endTime - startTime) / 1000 / 60);
+    let correctCount = 0;
+    questions.forEach((q, idx) => { if (userAnswers[idx] === q.correct) correctCount++; });
+    const score = Math.round((correctCount / questions.length) * 100);
+    const wrongCount = questions.length - correctCount;
+    let grade, gradeClass, icon, title, message;
+    if (score >= 85) { grade = 'A — Sangat Baik'; gradeClass = 'grade-A'; icon = '🏆'; title = 'LULUS ISTIMEWA'; message = 'Selamat! Anda telah menguasai materi RPM dengan sangat baik. Anda siap menjadi pengimbas yang handal.'; } 
+    else if (score >= 70) { grade = 'B — Baik'; gradeClass = 'grade-B'; icon = '🎉'; title = 'LULUS'; message = 'Bagus! Anda telah memahami konsep RPM dengan baik. Terus pelajari dan praktikkan di kelas.'; } 
+    else if (score >= 60) { grade = 'C — Cukup'; gradeClass = 'grade-C'; icon = '📚'; title = 'PERLU PENDALAMAN'; message = 'Pemahaman Anda sudah cukup, namun masih ada beberapa konsep yang perlu dipelajari lebih mendalam.'; } 
+    else { grade = 'D — Perlu Peningkatan'; gradeClass = 'grade-D'; icon = '💪'; title = 'BELUM LULUS'; message = 'Anda perlu mempelajari kembali materi RPM secara menyeluruh. Fokus pada 3 prinsip utama, 3 pengalaman belajar, dan 4 tahap kerangka RPM.'; }
+    
+    document.getElementById('resultIcon').textContent = icon;
+    document.getElementById('resultTitle').textContent = title;
+    document.getElementById('finalScore').textContent = score;
+    document.getElementById('userNameResult').textContent = document.getElementById('userName').value;
+    document.getElementById('userSchoolResult').textContent = document.getElementById('userSchool').value;
+    document.getElementById('gradeBadge').textContent = grade;
+    document.getElementById('gradeBadge').className = 'grade-badge ' + gradeClass;
+    document.getElementById('resultMessage').textContent = message;
+    document.getElementById('correctCount').textContent = correctCount;
+    document.getElementById('wrongCount').textContent = wrongCount;
+    document.getElementById('timeUsed').textContent = timeUsed;
+    
+    lastResultData = { nama: document.getElementById('userName').value, sekolah: document.getElementById('userSchool').value, skor: score, predikat: grade, waktu: timeUsed, tanggal: new Date().toLocaleDateString('id-ID') };
+    generateQRSection(lastResultData);
+    
+    const reviewContainer = document.getElementById('reviewContainer');
+    reviewContainer.innerHTML = '';
+    const letters = ['A', 'B', 'C', 'D'];
+    questions.forEach((q, idx) => {
+      const isCorrect = userAnswers[idx] === q.correct;
+      const item = document.createElement('div');
+      item.className = 'review-item ' + (isCorrect ? 'correct' : 'wrong');
+      let answerHtml = isCorrect ? `<div class="review-answer user-correct">✓ Jawaban Anda: ${letters[userAnswers[idx]]}. ${q.options[userAnswers[idx]]}</div>` : `<div class="review-answer user-wrong">✗ Jawaban Anda: ${userAnswers[idx] !== null ? letters[userAnswers[idx]] + '. ' + q.options[userAnswers[idx]] : 'Tidak dijawab'}</div><div class="review-answer correct-answer">✓ Jawaban Benar: ${letters[q.correct]}. ${q.options[q.correct]}</div>`;
+      item.innerHTML = `<div class="review-question">Soal ${idx + 1}: ${q.q}</div>${answerHtml}<div class="review-explanation">💡 ${q.explanation}</div>`;
+      reviewContainer.appendChild(item);
+    });
+    document.getElementById('quizScreen').classList.remove('active');
+    document.getElementById('resultScreen').classList.add('active');
+    window.scrollTo(0, 0);
+  }
+
+  function isConfigValid() { return ADMIN_CONFIG.formId && !ADMIN_CONFIG.formId.includes('GANTI') && ADMIN_CONFIG.entries.nama && !ADMIN_CONFIG.entries.nama.includes('GANTI'); }
+  function buildFormURL(data) {
+    const base = `https://docs.google.com/forms/d/e/${ADMIN_CONFIG.formId}/viewform`;
+    const params = new URLSearchParams();
+    params.append(ADMIN_CONFIG.entries.nama, data.nama);
+    params.append(ADMIN_CONFIG.entries.sekolah, data.sekolah);
+    params.append(ADMIN_CONFIG.entries.skor, data.skor);
+    params.append(ADMIN_CONFIG.entries.predikat, data.predikat);
+    params.append(ADMIN_CONFIG.entries.waktu, data.waktu);
+    return `${base}?${params.toString()}`;
+  }
+
+  function generateQRSection(data) {
+    const qrDisplay = document.getElementById('qrDisplay');
+    const qrWarning = document.getElementById('qrWarning');
+    if (!isConfigValid()) { qrDisplay.style.display = 'none'; qrWarning.style.display = 'block'; return; }
+    qrDisplay.style.display = 'block'; qrWarning.style.display = 'none';
+    const formURL = buildFormURL(data);
+    const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(formURL)}&margin=10`;
+    document.getElementById('qrImage').src = qrApiUrl;
+    document.getElementById('qrLinkBox').textContent = formURL;
+  }
+
+  function openFormDirect() { if (!lastResultData || !isConfigValid()) { alert('Form belum dikonfigurasi.'); return; } window.open(buildFormURL(lastResultData), '_blank'); }
+  function copyLink() {
+    if (!lastResultData || !isConfigValid()) { alert('Form belum dikonfigurasi.'); return; }
+    navigator.clipboard.writeText(buildFormURL(lastResultData)).then(() => showToast('✓ Link berhasil disalin!')).catch(() => alert('Gagal menyalin.'));
+  }
+  function sendWhatsApp() {
+    if (!lastResultData) return;
+    const message = `*Hasil Refleksi & Evaluasi RPM*\n━━━━━━━━━━━━━━━\n👤 Nama: ${lastResultData.nama}\n🏫 Sekolah: ${lastResultData.sekolah}\n📊 Skor: ${lastResultData.skor}%\n🏆 Predikat: ${lastResultData.predikat}\n⏱️ Waktu: ${lastResultData.waktu} menit\n📅 Tanggal: ${lastResultData.tanggal}\n━━━━━━━━━━━━━━━\n_Evaluasi oleh: MIFTACHUL ULUM, M.Pd._`;
+    window.open(`https://wa.me/${ADMIN_CONFIG.whatsappNumber}?text=${encodeURIComponent(message)}`, '_blank');
+  }
+  function showToast(message) { const toast = document.getElementById('toast'); toast.textContent = message; toast.classList.add('show'); setTimeout(() => toast.classList.remove('show'), 2500); }
+  function restartTest() {
+    if (!confirm('Apakah Anda yakin ingin mengulang evaluasi ini?')) return;
+    currentQ = 0; userAnswers = new Array(questions.length).fill(null); timeRemaining = 30 * 60; lastResultData = null;
+    document.getElementById('resultScreen').classList.remove('active');
+    document.getElementById('startScreen').classList.add('active');
+    window.scrollTo(0, 0);
+  }
+</script>
+</body>
+</html>
